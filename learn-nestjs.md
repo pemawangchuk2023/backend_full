@@ -54,12 +54,25 @@ Main benefits:
 ## 1.3 Diagram: Basic NestJS Application Structure
 
 ```mermaid
-flowchart TD
-    A[main.ts<br/>Application Entry Point] --> B[AppModule<br/>Root Module]
-    B --> C[UsersModule<br/>Feature Module]
-    C --> D[UsersController<br/>Handles HTTP Requests]
-    C --> E[UsersService<br/>Business Logic]
-    D --> E
+flowchart LR
+    Client(["HTTP Client"]):::client --> Main["main.ts<br/>Bootstrap Nest app"]:::entry
+    Main --> App["AppModule<br/>Root application module"]:::module
+    App --> Users["UsersModule<br/>Feature module"]:::module
+
+    subgraph Feature["Users Feature Boundary"]
+        direction TB
+        Users --> Controller["UsersController<br/>Routes and request handlers"]:::controller
+        Users --> Service["UsersService<br/>Business logic provider"]:::service
+        Controller -->|"calls methods"| Service
+    end
+
+    Service --> Response(["HTTP Response"]):::client
+
+    classDef client fill:#ecfeff,stroke:#0891b2,color:#164e63,stroke-width:2px;
+    classDef entry fill:#fef9c3,stroke:#ca8a04,color:#713f12,stroke-width:2px;
+    classDef module fill:#fce7f3,stroke:#db2777,color:#831843,stroke-width:2px;
+    classDef controller fill:#ede9fe,stroke:#7c3aed,color:#3b0764,stroke-width:2px;
+    classDef service fill:#dcfce7,stroke:#16a34a,color:#14532d,stroke-width:2px;
 ```
 
 ## 1.4 `main.ts`
@@ -155,10 +168,15 @@ GET /users
 
 ```mermaid
 flowchart LR
-    A[GET /users] --> B[@Controller('users')]
-    B --> C[@Get]
-    C --> D[getUsers method]
-    D --> E[Response returned to client]
+    Req["GET /users"]:::request --> Prefix["@Controller('users')<br/>base route = /users"]:::decorator
+    Prefix --> Method["@Get()<br/>HTTP GET handler"]:::decorator
+    Method --> Handler["getUsers()<br/>controller method"]:::handler
+    Handler --> Res["Response<br/>returned to client"]:::response
+
+    classDef request fill:#ecfeff,stroke:#0891b2,color:#164e63,stroke-width:2px;
+    classDef decorator fill:#fce7f3,stroke:#db2777,color:#831843,stroke-width:2px;
+    classDef handler fill:#ede9fe,stroke:#7c3aed,color:#3b0764,stroke-width:2px;
+    classDef response fill:#dcfce7,stroke:#16a34a,color:#14532d,stroke-width:2px;
 ```
 
 ---
@@ -231,10 +249,16 @@ getUser(@Param('id') id: string) {
 
 ```mermaid
 flowchart LR
-    A[GET /users/45] --> B[Route pattern: /users/:id]
-    B --> C[id = 45]
-    C --> D[@Param('id')]
-    D --> E[Controller method receives id]
+    Url["GET /users/45"]:::request --> Pattern["Route pattern<br/>/users/:id"]:::route
+    Pattern --> Extract["Extract dynamic segment<br/>id = '45'"]:::pipe
+    Extract --> Decorator["@Param('id')"]:::decorator
+    Decorator --> Handler["Controller receives<br/>id as string"]:::handler
+
+    classDef request fill:#ecfeff,stroke:#0891b2,color:#164e63,stroke-width:2px;
+    classDef route fill:#fef9c3,stroke:#ca8a04,color:#713f12,stroke-width:2px;
+    classDef pipe fill:#ffedd5,stroke:#ea580c,color:#7c2d12,stroke-width:2px;
+    classDef decorator fill:#fce7f3,stroke:#db2777,color:#831843,stroke-width:2px;
+    classDef handler fill:#ede9fe,stroke:#7c3aed,color:#3b0764,stroke-width:2px;
 ```
 
 Important: params arrive as **strings** by default.
@@ -269,11 +293,19 @@ Query parameters are useful for pagination, filtering, searching, and sorting.
 
 ```mermaid
 flowchart LR
-    A[GET /users?limit=10&offset=20] --> B[Query String]
-    B --> C[limit = 10]
-    B --> D[offset = 20]
-    C --> E[@Query('limit')]
-    D --> F[@Query('offset')]
+    Url["GET /users?limit=10&offset=20"]:::request --> Query["Query string<br/>after ?"]:::query
+    Query --> Limit["limit = '10'"]:::value
+    Query --> Offset["offset = '20'"]:::value
+    Limit --> QLimit["@Query('limit')"]:::decorator
+    Offset --> QOffset["@Query('offset')"]:::decorator
+    QLimit --> Handler["Controller method arguments"]:::handler
+    QOffset --> Handler
+
+    classDef request fill:#ecfeff,stroke:#0891b2,color:#164e63,stroke-width:2px;
+    classDef query fill:#fef9c3,stroke:#ca8a04,color:#713f12,stroke-width:2px;
+    classDef value fill:#ffedd5,stroke:#ea580c,color:#7c2d12,stroke-width:2px;
+    classDef decorator fill:#fce7f3,stroke:#db2777,color:#831843,stroke-width:2px;
+    classDef handler fill:#ede9fe,stroke:#7c3aed,color:#3b0764,stroke-width:2px;
 ```
 
 ---
@@ -671,11 +703,18 @@ getUser(@Param() params: GetUserParamDto) {
 
 ```mermaid
 flowchart LR
-    A[GET /users/45] --> B[@Param]
-    B --> C[GetUserParamDto]
-    C --> D[@Type converts string to number]
-    D --> E[@IsInt validates integer]
-    E --> F[Controller receives params.id]
+    Req["GET /users/45"]:::request --> Param["@Param()<br/>extracts route params"]:::decorator
+    Param --> Dto["GetUserParamDto<br/>{ id }"]:::dto
+    Dto --> TypeStep["@Type<br/>convert '45' to 45"]:::pipe
+    TypeStep --> Validate["@IsInt<br/>validate integer"]:::validate
+    Validate --> Handler["Controller receives<br/>params.id as number"]:::handler
+
+    classDef request fill:#ecfeff,stroke:#0891b2,color:#164e63,stroke-width:2px;
+    classDef decorator fill:#fce7f3,stroke:#db2777,color:#831843,stroke-width:2px;
+    classDef dto fill:#ede9fe,stroke:#7c3aed,color:#3b0764,stroke-width:2px;
+    classDef pipe fill:#ffedd5,stroke:#ea580c,color:#7c2d12,stroke-width:2px;
+    classDef validate fill:#dcfce7,stroke:#16a34a,color:#14532d,stroke-width:2px;
+    classDef handler fill:#fef9c3,stroke:#ca8a04,color:#713f12,stroke-width:2px;
 ```
 
 ---
