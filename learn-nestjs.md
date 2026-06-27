@@ -1,72 +1,30 @@
 # Learn NestJS — Academic Notes
 
-> A simple, structured note file for the NestJS chapters covered so far.  
-> This file is intentionally kept as a single learning document so new chapters can be added later.
+> Single-file academic notes for the NestJS chapters covered so far.  
+> Diagrams are written in **Mermaid**, because GitHub renders Mermaid diagrams in Markdown preview.  
+> More chapters can be appended later.
 
 ---
 
-## Visual Overview: How a NestJS REST Request Works
+## Master Diagram: NestJS REST Request Flow
 
-```svg
-<svg width="1000" height="520" viewBox="0 0 1000 520" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
-      <stop offset="0%" stop-color="#f8fbff"/>
-      <stop offset="100%" stop-color="#eef3ff"/>
-    </linearGradient>
-    <linearGradient id="nest" x1="0" x2="1">
-      <stop offset="0%" stop-color="#e0234e"/>
-      <stop offset="100%" stop-color="#ff6b8a"/>
-    </linearGradient>
-    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="0" dy="8" stdDeviation="8" flood-color="#1f2937" flood-opacity="0.16"/>
-    </filter>
-    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
-      <path d="M0,0 L0,6 L9,3 z" fill="#334155" />
-    </marker>
-  </defs>
+```mermaid
+flowchart LR
+    A[Client<br/>Browser / Thunder Client / Frontend] -->|HTTP Request| B[Controller]
+    B --> C[Pipes]
+    C --> D[DTO Validation]
+    D --> E[Provider / Service]
+    E --> F[(Database / External API)]
+    F --> E
+    E --> B
+    B -->|HTTP Response| A
 
-  <rect width="1000" height="520" rx="28" fill="url(#bg)"/>
-  <text x="500" y="48" text-anchor="middle" font-size="28" font-family="Arial" font-weight="700" fill="#0f172a">NestJS Request Lifecycle for REST APIs</text>
-
-  <rect x="50" y="115" width="170" height="100" rx="18" fill="#ffffff" filter="url(#shadow)"/>
-  <text x="135" y="150" text-anchor="middle" font-size="20" font-family="Arial" font-weight="700" fill="#0f172a">Client</text>
-  <text x="135" y="180" text-anchor="middle" font-size="14" font-family="Arial" fill="#475569">Browser / Thunder Client</text>
-  <text x="135" y="200" text-anchor="middle" font-size="14" font-family="Arial" fill="#475569">GET, POST, PATCH...</text>
-
-  <rect x="290" y="105" width="190" height="120" rx="18" fill="#ffffff" filter="url(#shadow)"/>
-  <text x="385" y="140" text-anchor="middle" font-size="20" font-family="Arial" font-weight="700" fill="#0f172a">Controller</text>
-  <text x="385" y="170" text-anchor="middle" font-size="14" font-family="Arial" fill="#475569">@Controller('users')</text>
-  <text x="385" y="192" text-anchor="middle" font-size="14" font-family="Arial" fill="#475569">@Get(), @Post()</text>
-
-  <rect x="540" y="105" width="190" height="120" rx="18" fill="#ffffff" filter="url(#shadow)"/>
-  <text x="635" y="140" text-anchor="middle" font-size="20" font-family="Arial" font-weight="700" fill="#0f172a">Pipes + DTOs</text>
-  <text x="635" y="170" text-anchor="middle" font-size="14" font-family="Arial" fill="#475569">Validate input</text>
-  <text x="635" y="192" text-anchor="middle" font-size="14" font-family="Arial" fill="#475569">Transform data</text>
-
-  <rect x="790" y="105" width="160" height="120" rx="18" fill="#ffffff" filter="url(#shadow)"/>
-  <text x="870" y="140" text-anchor="middle" font-size="20" font-family="Arial" font-weight="700" fill="#0f172a">Provider</text>
-  <text x="870" y="170" text-anchor="middle" font-size="14" font-family="Arial" fill="#475569">Service logic</text>
-  <text x="870" y="192" text-anchor="middle" font-size="14" font-family="Arial" fill="#475569">Database / business</text>
-
-  <rect x="320" y="325" width="360" height="120" rx="22" fill="url(#nest)" filter="url(#shadow)"/>
-  <text x="500" y="365" text-anchor="middle" font-size="24" font-family="Arial" font-weight="700" fill="#ffffff">Module</text>
-  <text x="500" y="395" text-anchor="middle" font-size="15" font-family="Arial" fill="#ffffff">Organizes controllers and providers</text>
-  <text x="500" y="420" text-anchor="middle" font-size="15" font-family="Arial" fill="#ffffff">Example: UsersModule imported into AppModule</text>
-
-  <line x1="220" y1="165" x2="290" y2="165" stroke="#334155" stroke-width="3" marker-end="url(#arrow)"/>
-  <line x1="480" y1="165" x2="540" y2="165" stroke="#334155" stroke-width="3" marker-end="url(#arrow)"/>
-  <line x1="730" y1="165" x2="790" y2="165" stroke="#334155" stroke-width="3" marker-end="url(#arrow)"/>
-  <line x1="870" y1="225" x2="870" y2="270" stroke="#334155" stroke-width="3"/>
-  <line x1="870" y1="270" x2="135" y2="270" stroke="#334155" stroke-width="3"/>
-  <line x1="135" y1="270" x2="135" y2="215" stroke="#334155" stroke-width="3" marker-end="url(#arrow)"/>
-
-  <line x1="385" y1="225" x2="435" y2="325" stroke="#64748b" stroke-width="2" stroke-dasharray="8 6"/>
-  <line x1="635" y1="225" x2="565" y2="325" stroke="#64748b" stroke-width="2" stroke-dasharray="8 6"/>
-  <line x1="870" y1="225" x2="650" y2="325" stroke="#64748b" stroke-width="2" stroke-dasharray="8 6"/>
-
-  <text x="500" y="492" text-anchor="middle" font-size="14" font-family="Arial" fill="#475569">Request data flows through route handlers, pipes, DTO validation, and service providers before a response is returned.</text>
-</svg>
+    subgraph NestJS Application
+        B
+        C
+        D
+        E
+    end
 ```
 
 ---
@@ -75,42 +33,43 @@
 
 ## 1.1 What is NestJS?
 
-**NestJS** is a progressive Node.js framework for building efficient, reliable, and scalable server-side applications.
+**NestJS** is a progressive Node.js framework used to build scalable backend applications. It uses **TypeScript** by default and provides a structured architecture for building APIs, microservices, WebSocket applications, and more.
 
-It is built on top of Node.js HTTP platforms such as **Express** by default, and it also supports Fastify.
+NestJS is commonly used to build **REST APIs**. By default, it runs on top of **Express**, but it can also use **Fastify**.
 
-NestJS uses TypeScript heavily and follows a structured architecture inspired by Angular.
+## 1.2 Why NestJS is useful
 
-## 1.2 Why use NestJS?
+NestJS gives a professional backend structure. Instead of putting all logic in one file, it separates code into modules, controllers, services, DTOs, pipes, guards, and other building blocks.
 
-NestJS helps developers build backend applications using a clean and organized structure.
+Main benefits:
 
-Important benefits:
+- TypeScript-first framework
+- Clean project structure
+- Modular architecture
+- Dependency injection
+- Built-in validation and transformation tools
+- Good for large applications
+- Good support for REST APIs
 
-- Uses **TypeScript** by default
-- Encourages modular architecture
-- Supports REST APIs, GraphQL, WebSockets, microservices, and more
-- Provides dependency injection
-- Has built-in support for pipes, guards, interceptors, filters, and validation
-- Makes large backend projects easier to maintain
+## 1.3 Diagram: Basic NestJS Application Structure
 
-## 1.3 Basic NestJS Application Structure
-
-A simple NestJS project usually contains:
-
-```text
-src/
-  app.module.ts
-  app.controller.ts
-  app.service.ts
-  main.ts
+```mermaid
+flowchart TD
+    A[main.ts<br/>Application Entry Point] --> B[AppModule<br/>Root Module]
+    B --> C[UsersModule<br/>Feature Module]
+    C --> D[UsersController<br/>Handles HTTP Requests]
+    C --> E[UsersService<br/>Business Logic]
+    D --> E
 ```
 
-### `main.ts`
+## 1.4 `main.ts`
 
-The entry point of the application.
+`main.ts` is the entry point of the NestJS application.
 
 ```ts
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   await app.listen(3000);
@@ -118,91 +77,61 @@ async function bootstrap() {
 bootstrap();
 ```
 
-### `AppModule`
+The app runs at:
 
-The root module of the application.
-
-```ts
-@Module({
-  imports: [],
-  controllers: [],
-  providers: [],
-})
-export class AppModule {}
+```text
+http://localhost:3000
 ```
-
-## 1.4 NestJS REST Idea
-
-In REST APIs, clients send HTTP requests to server endpoints.
-
-Example:
-
-```http
-GET http://localhost:3000/users
-```
-
-NestJS receives the request through a controller method and returns a response.
 
 ---
 
-# 2. Understanding Modules
+# 2. Understanding Modules, Controllers, Routes, Params, Query, Body, and Providers
 
 ## 2.1 What is a Module?
 
-A **module** is a class decorated with `@Module()`.
-
-Modules organize related parts of the application.
-
-Example:
+A **module** organizes related parts of an application. A module is created using the `@Module()` decorator.
 
 ```ts
 import { Module } from '@nestjs/common';
 import { UsersController } from './users.controller';
+import { UsersService } from './users.service';
 
 @Module({
   controllers: [UsersController],
+  providers: [UsersService],
 })
 export class UsersModule {}
 ```
 
-A module may contain:
+## 2.2 Diagram: Module Anatomy
 
-- `imports`
-- `controllers`
-- `providers`
-- `exports`
+```mermaid
+flowchart TD
+    A[UsersModule] --> B[controllers array]
+    A --> C[providers array]
+    A --> D[imports array]
+    A --> E[exports array]
 
-## 2.2 Why modules are important
-
-Modules help divide the application into feature areas.
-
-Example:
-
-```text
-UsersModule
-ProductsModule
-AuthModule
-OrdersModule
+    B --> F[UsersController]
+    C --> G[UsersService]
+    D --> H[Other Modules]
+    E --> I[Shared Providers]
 ```
 
-This improves maintainability and makes the project easier to scale.
+## 2.3 Module metadata
 
-## 2.3 Importing Feature Modules
-
-A feature module must be imported into another module, commonly `AppModule`, to become part of the application.
-
-```ts
-@Module({
-  imports: [UsersModule],
-})
-export class AppModule {}
-```
+| Property | Purpose |
+|---|---|
+| `imports` | Imports other modules |
+| `controllers` | Registers controllers that handle requests |
+| `providers` | Registers services/providers used by the module |
+| `exports` | Makes providers available to other modules |
 
 ---
 
 ## 2.4 Controllers
 
-A **controller** handles incoming requests and returns responses.
+A **controller** receives HTTP requests and returns responses.
 
 ```ts
 import { Controller, Get } from '@nestjs/common';
@@ -211,44 +140,34 @@ import { Controller, Get } from '@nestjs/common';
 export class UsersController {
   @Get()
   getUsers() {
-    return 'You sent a GET request to users endpoint';
+    return 'Get all users';
   }
 }
 ```
 
-Here:
-
-```ts
-@Controller('users')
-```
-
-creates the base route:
-
-```text
-/users
-```
-
-And:
-
-```ts
-@Get()
-```
-
-handles:
+This creates the endpoint:
 
 ```http
 GET /users
 ```
 
+## 2.5 Diagram: Controller Route Matching
+
+```mermaid
+flowchart LR
+    A[GET /users] --> B[@Controller('users')]
+    B --> C[@Get]
+    C --> D[getUsers method]
+    D --> E[Response returned to client]
+```
+
 ---
 
-## 2.5 Routing Decorators
+## 2.6 Routing Decorators
 
-Routing decorators define which HTTP method a controller method handles.
+Routing decorators connect HTTP methods to controller methods.
 
-Common routing decorators:
-
-| Decorator | HTTP Method | Purpose |
+| Decorator | HTTP Method | Common Use |
 |---|---|---|
 | `@Get()` | GET | Read data |
 | `@Post()` | POST | Create data |
@@ -263,23 +182,35 @@ Example:
 export class UsersController {
   @Get()
   findAll() {
-    return 'Get all users';
+    return 'All users';
   }
 
   @Post()
   create() {
-    return 'Create user';
+    return 'User created';
   }
 }
 ```
 
+## 2.7 Diagram: REST Verbs in a Users Resource
+
+```mermaid
+flowchart TD
+    A[/users Resource/] --> B[GET /users<br/>Read users]
+    A --> C[POST /users<br/>Create user]
+    A --> D[GET /users/:id<br/>Read one user]
+    A --> E[PATCH /users/:id<br/>Update part of user]
+    A --> F[PUT /users/:id<br/>Replace user]
+    A --> G[DELETE /users/:id<br/>Delete user]
+```
+
 ---
 
-## 2.6 Route Params
+## 2.8 Route Params
 
-Route params are values inside the URL path.
+Route params are dynamic values in the URL path.
 
-Example request:
+Request:
 
 ```http
 GET /users/45
@@ -294,17 +225,27 @@ getUser(@Param('id') id: string) {
 }
 ```
 
-Here `45` is received as `id`.
+`45` becomes the value of `id`.
 
-Important note: URL params arrive as strings by default.
+## 2.9 Diagram: Route Params
+
+```mermaid
+flowchart LR
+    A[GET /users/45] --> B[Route pattern: /users/:id]
+    B --> C[id = 45]
+    C --> D[@Param('id')]
+    D --> E[Controller method receives id]
+```
+
+Important: params arrive as **strings** by default.
 
 ---
 
-## 2.7 Query Parameters
+## 2.10 Query Parameters
 
-Query parameters are values after `?` in the URL.
+Query parameters come after `?` in the URL.
 
-Example:
+Request:
 
 ```http
 GET /users?limit=10&offset=20
@@ -322,26 +263,26 @@ getUsers(
 }
 ```
 
-Query parameters are useful for:
+Query parameters are useful for pagination, filtering, searching, and sorting.
 
-- Pagination
-- Filtering
-- Searching
-- Sorting
+## 2.11 Diagram: Query Parameters
 
-Example:
-
-```text
-/users?search=pema&page=1&limit=10
+```mermaid
+flowchart LR
+    A[GET /users?limit=10&offset=20] --> B[Query String]
+    B --> C[limit = 10]
+    B --> D[offset = 20]
+    C --> E[@Query('limit')]
+    D --> F[@Query('offset')]
 ```
 
 ---
 
-## 2.8 Request Body
+## 2.12 Request Body
 
-The request body contains data sent by the client, commonly in POST, PUT, or PATCH requests.
+The request body contains data sent by the client, usually in `POST`, `PUT`, or `PATCH` requests.
 
-Example request:
+Request:
 
 ```http
 POST /users
@@ -364,17 +305,24 @@ createUser(@Body() body: any) {
 }
 ```
 
-However, using `any` is not recommended for real applications. DTOs should be used instead.
+For real applications, avoid `any`. Use DTOs.
+
+## 2.13 Diagram: Body Data Flow
+
+```mermaid
+sequenceDiagram
+    participant C as Client
+    participant API as NestJS Controller
+    C->>API: POST /users with JSON body
+    API->>API: @Body() extracts JSON payload
+    API-->>C: Response
+```
 
 ---
 
-## 2.9 Providers
+## 2.14 Providers
 
-A **provider** is usually a service class that contains business logic.
-
-Controllers should not contain too much business logic. Instead, they call providers.
-
-Example service:
+A **provider** is usually a service class that holds business logic.
 
 ```ts
 import { Injectable } from '@nestjs/common';
@@ -387,17 +335,7 @@ export class UsersService {
 }
 ```
 
-Register provider in module:
-
-```ts
-@Module({
-  controllers: [UsersController],
-  providers: [UsersService],
-})
-export class UsersModule {}
-```
-
-Use it in controller:
+Use service in controller:
 
 ```ts
 @Controller('users')
@@ -411,7 +349,15 @@ export class UsersController {
 }
 ```
 
-This is called **dependency injection**.
+## 2.15 Diagram: Dependency Injection
+
+```mermaid
+flowchart TD
+    A[UsersModule] --> B[Registers UsersService as provider]
+    B --> C[NestJS Dependency Injection Container]
+    C --> D[Injects UsersService into UsersController constructor]
+    D --> E[Controller calls service methods]
+```
 
 ---
 
@@ -419,60 +365,51 @@ This is called **dependency injection**.
 
 ## 3.1 Why validation is needed
 
-Validation protects the application from invalid data.
+Validation checks whether incoming data is correct before the application uses it.
 
-Without validation, a client may send incorrect data such as:
+Example invalid data:
 
 ```json
 {
-  "email": "not-an-email",
+  "email": "wrong-email",
   "password": "123"
 }
 ```
 
-Validation helps ensure the data has the expected format before it reaches business logic.
+Validation protects the application from bad input.
 
 ## 3.2 Why transformation is needed
 
-HTTP route params and query params usually arrive as strings.
+HTTP params and query values are usually strings.
 
-Example:
+Request:
 
 ```http
 GET /users/45?limit=10
 ```
 
-Even though `45` and `10` look like numbers, they arrive as strings:
+Although `45` and `10` look like numbers, they arrive as strings.
 
-```ts
-typeof id === 'string'
-typeof limit === 'string'
-```
-
-Transformation converts them to the correct type.
-
----
+Transformation converts values into the expected type.
 
 ## 3.3 What is a Pipe?
 
-A **pipe** is a NestJS feature used for:
+A **pipe** is a class that runs before the controller method. It can validate or transform incoming data.
 
-1. Validation
-2. Transformation
+## 3.4 Diagram: Pipe Position in Request Lifecycle
 
-Pipes run before the controller method is executed.
-
-```text
-Request → Pipe → Controller Method
+```mermaid
+flowchart LR
+    A[Incoming Request] --> B[Route Matching]
+    B --> C[Pipe]
+    C -->|Valid data| D[Controller Method]
+    C -->|Invalid data| E[400 Bad Request]
+    D --> F[Response]
 ```
 
 ---
 
-## 3.4 Validating Params with Pipes
-
-`ParseIntPipe` validates and transforms a value into a number.
-
-Example:
+## 3.5 Validating Params with `ParseIntPipe`
 
 ```ts
 @Get(':id')
@@ -481,45 +418,33 @@ getUser(@Param('id', ParseIntPipe) id: number) {
 }
 ```
 
-Request:
+Valid request:
 
 ```http
 GET /users/45
 ```
 
-`id` becomes a number.
-
-But this request fails:
+Invalid request:
 
 ```http
 GET /users/abc
 ```
 
-Because `abc` cannot be converted into a number.
+If `abc` is sent, NestJS returns `400 Bad Request` because `abc` is not a numeric string.
 
-NestJS returns:
+## 3.6 Diagram: `ParseIntPipe`
 
-```json
-{
-  "message": "Validation failed (numeric string is expected)",
-  "error": "Bad Request",
-  "statusCode": 400
-}
+```mermaid
+flowchart TD
+    A[URL Param id = '45'] --> B[ParseIntPipe]
+    B --> C{Can convert to number?}
+    C -->|Yes| D[id = 45 as number]
+    C -->|No| E[400 Bad Request]
 ```
-
-This is expected behavior. It means the pipe is working.
 
 ---
 
-## 3.5 Validating Query Parameters
-
-Example request:
-
-```http
-GET /users/45?limit=10&offset=20
-```
-
-Controller:
+## 3.7 Validating Query Parameters
 
 ```ts
 @Get(':id')
@@ -532,48 +457,62 @@ getUser(
 }
 ```
 
-Here:
-
-- `id` is converted to number
-- `limit` is converted to number
-- `offset` is converted to number
-
-If the query is missing or non-numeric, `ParseIntPipe` returns a `400 Bad Request`.
-
-Example invalid request:
+Request:
 
 ```http
-GET /users/45?limit=abc&offset=20
+GET /users/45?limit=10&offset=20
+```
+
+All values are transformed to numbers.
+
+## 3.8 Diagram: Query Validation
+
+```mermaid
+flowchart LR
+    A[limit='10'] --> C[ParseIntPipe]
+    B[offset='20'] --> D[ParseIntPipe]
+    C --> E[limit=10 number]
+    D --> F[offset=20 number]
+    E --> G[Controller method]
+    F --> G
 ```
 
 ---
 
-# 4. DTOs, Global Pipes, and Safe Requests
+# 4. DTOs, Global Pipes, and Avoiding Malicious Requests
 
 ## 4.1 What is a DTO?
 
-DTO means **Data Transfer Object**.
-
-A DTO defines the expected shape of data transferred between client and server.
+DTO means **Data Transfer Object**. It defines the shape of data transferred between client and server.
 
 Example:
 
 ```ts
 export class CreateUserDto {
-  firstName: string;
-  lastName: string;
-  email: string;
-  password: string;
+  firstName!: string;
+  lastName!: string;
+  email!: string;
+  password!: string;
 }
 ```
 
-In NestJS, DTOs are commonly used with validation decorators.
+DTOs make code safer and clearer.
+
+## 4.2 Diagram: DTO Purpose
+
+```mermaid
+flowchart LR
+    A[Client JSON Body] --> B[CreateUserDto]
+    B --> C{Matches expected shape?}
+    C -->|Yes| D[Controller receives safe object]
+    C -->|No| E[Validation Error]
+```
 
 ---
 
-## 4.2 DTO with Validation Decorators
+## 4.3 DTO with Validation Decorators
 
-Install packages if needed:
+Install validation packages:
 
 ```bash
 npm install class-validator class-transformer
@@ -600,13 +539,11 @@ export class CreateUserDto {
 }
 ```
 
-The `!` tells TypeScript that NestJS will assign the value later from the request body.
+The `!` means TypeScript should not complain about the property not being initialized in the constructor. NestJS will assign it from the request body.
 
 ---
 
-## 4.3 Connecting DTO to Route Method
-
-Instead of using `any`, use the DTO as the type of `@Body()`.
+## 4.4 Connecting DTO to a Route Method
 
 ```ts
 @Post()
@@ -615,18 +552,26 @@ createUser(@Body() createUserDto: CreateUserDto) {
 }
 ```
 
-This improves:
+This connects the request body to the DTO.
 
-- Type safety
-- Code readability
-- Validation support
-- API structure
+## 4.5 Diagram: DTO Connected to `@Body()`
+
+```mermaid
+sequenceDiagram
+    participant C as Client
+    participant Ctrl as UsersController
+    participant DTO as CreateUserDto
+    C->>Ctrl: POST /users with JSON body
+    Ctrl->>DTO: @Body() mapped to CreateUserDto
+    DTO-->>Ctrl: Validated user data
+    Ctrl-->>C: Response
+```
 
 ---
 
-## 4.4 Global Pipes
+## 4.6 Global ValidationPipe
 
-To make DTO validation work globally, add `ValidationPipe` in `main.ts`.
+To enable validation globally, configure `ValidationPipe` in `main.ts`.
 
 ```ts
 import { ValidationPipe } from '@nestjs/common';
@@ -649,13 +594,24 @@ async function bootstrap() {
 bootstrap();
 ```
 
+## 4.7 Diagram: Global Pipe Protection
+
+```mermaid
+flowchart TD
+    A[Every Incoming Request] --> B[Global ValidationPipe]
+    B --> C{DTO validation passes?}
+    C -->|Yes| D[Controller Method]
+    C -->|No| E[400 Bad Request]
+    B --> F[whitelist removes unknown fields]
+    B --> G[forbidNonWhitelisted rejects unknown fields]
+    B --> H[transform converts types]
+```
+
 ---
 
-## 4.5 Avoiding Malicious Requests
+## 4.8 Avoiding Malicious Requests
 
-A client may send extra unwanted properties.
-
-Example malicious or unwanted request:
+A client may send unwanted fields:
 
 ```json
 {
@@ -667,39 +623,33 @@ Example malicious or unwanted request:
 }
 ```
 
-The user should not be allowed to send `isAdmin` if the API does not expect it.
-
-With this global pipe configuration:
-
-```ts
-new ValidationPipe({
-  whitelist: true,
-  forbidNonWhitelisted: true,
-  transform: true,
-})
-```
-
-Behavior:
+If the DTO does not define `isAdmin`, then `forbidNonWhitelisted: true` rejects the request.
 
 | Option | Meaning |
 |---|---|
 | `whitelist: true` | Removes properties not defined in DTO |
-| `forbidNonWhitelisted: true` | Throws an error if unknown properties are sent |
-| `transform: true` | Converts payloads to DTO instances and can transform primitive types |
+| `forbidNonWhitelisted: true` | Throws error when extra properties are sent |
+| `transform: true` | Converts values to expected types where possible |
 
-This helps protect the API from unwanted input.
+## 4.9 Diagram: Malicious Field Rejection
+
+```mermaid
+flowchart LR
+    A[Request body includes isAdmin:true] --> B[ValidationPipe]
+    B --> C{isAdmin exists in DTO?}
+    C -->|No| D[Reject request]
+    C -->|Yes| E[Allow request]
+```
 
 ---
 
-## 4.6 Using DTOs with Params
+## 4.10 Using DTOs with Params
 
-DTOs can also be used for route parameters.
-
-Example param DTO:
+DTOs can also validate route params.
 
 ```ts
-import { IsInt } from 'class-validator';
 import { Type } from 'class-transformer';
+import { IsInt } from 'class-validator';
 
 export class GetUserParamDto {
   @Type(() => Number)
@@ -717,15 +667,26 @@ getUser(@Param() params: GetUserParamDto) {
 }
 ```
 
-Because URL params arrive as strings, `@Type(() => Number)` helps convert `id` into a number before validation.
+## 4.11 Diagram: Params DTO
+
+```mermaid
+flowchart LR
+    A[GET /users/45] --> B[@Param]
+    B --> C[GetUserParamDto]
+    C --> D[@Type converts string to number]
+    D --> E[@IsInt validates integer]
+    E --> F[Controller receives params.id]
+```
 
 ---
 
 # 5. Using Mapped Types to Avoid Code Duplication
 
-## 5.1 Problem: Repeating DTOs
+## 5.1 The problem
 
-Suppose we have a DTO for creating a user:
+When building APIs, DTOs often look similar.
+
+Example create DTO:
 
 ```ts
 export class CreateUserDto {
@@ -736,45 +697,64 @@ export class CreateUserDto {
 }
 ```
 
-For updating a user, we may need similar fields, but optional.
+For update, the same fields may be needed, but optional. Writing them again duplicates code.
 
-Without mapped types, we might write another DTO manually:
+## 5.2 Diagram: DTO Duplication Problem
 
-```ts
-export class UpdateUserDto {
-  firstName?: string;
-  lastName?: string;
-  email?: string;
-  password?: string;
-}
+```mermaid
+flowchart TD
+    A[CreateUserDto] --> B[firstName]
+    A --> C[lastName]
+    A --> D[email]
+    A --> E[password]
+
+    F[UpdateUserDto manually written] --> G[firstName optional]
+    F --> H[lastName optional]
+    F --> I[email optional]
+    F --> J[password optional]
+
+    K[Problem: repeated fields and repeated validation]
 ```
-
-This duplicates code.
 
 ---
 
-## 5.2 What are Mapped Types?
+## 5.3 Mapped Types
 
-Mapped types help create new DTO types from existing DTOs.
+Mapped types create new DTOs from existing DTOs.
 
-Common mapped type helpers:
-
-| Helper | Purpose |
-|---|---|
-| `PartialType()` | Makes all properties optional |
-| `PickType()` | Selects only specific properties |
-| `OmitType()` | Removes specific properties |
-| `IntersectionType()` | Combines multiple DTOs |
-
-Install package if needed:
+Install package:
 
 ```bash
 npm install @nestjs/mapped-types
 ```
 
+Common helpers:
+
+| Helper | Purpose |
+|---|---|
+| `PartialType()` | Makes all fields optional |
+| `PickType()` | Selects only chosen fields |
+| `OmitType()` | Removes chosen fields |
+| `IntersectionType()` | Combines DTOs |
+
+## 5.4 Diagram: Mapped Types Overview
+
+```mermaid
+flowchart LR
+    A[CreateUserDto] --> B[PartialType]
+    A --> C[PickType]
+    A --> D[OmitType]
+    A --> E[IntersectionType]
+
+    B --> F[UpdateUserDto<br/>all fields optional]
+    C --> G[LoginUserDto<br/>only email and password]
+    D --> H[PublicUserDto<br/>without password]
+    E --> I[Combined DTO]
+```
+
 ---
 
-## 5.3 PartialType Example
+## 5.5 `PartialType()` Example
 
 ```ts
 import { PartialType } from '@nestjs/mapped-types';
@@ -783,9 +763,9 @@ import { CreateUserDto } from './create-user.dto';
 export class UpdateUserDto extends PartialType(CreateUserDto) {}
 ```
 
-This means `UpdateUserDto` has the same properties as `CreateUserDto`, but all are optional.
+This creates an update DTO where every property from `CreateUserDto` is optional.
 
-Useful for PATCH requests:
+Use it with PATCH:
 
 ```ts
 @Patch(':id')
@@ -797,24 +777,24 @@ updateUser(
 }
 ```
 
-Request:
+## 5.6 Diagram: `PartialType()` for PATCH
 
-```http
-PATCH /users/45
-Content-Type: application/json
-
-{
-  "firstName": "Updated Name"
-}
+```mermaid
+sequenceDiagram
+    participant C as Client
+    participant Ctrl as UsersController
+    participant DTO as UpdateUserDto extends PartialType(CreateUserDto)
+    C->>Ctrl: PATCH /users/45 { firstName: "New" }
+    Ctrl->>DTO: Validate partial body
+    DTO-->>Ctrl: Only provided valid fields
+    Ctrl-->>C: Updated response
 ```
-
-Only one field is required because PATCH usually updates partial data.
 
 ---
 
-## 5.4 PickType Example
+## 5.7 `PickType()` Example
 
-Use `PickType()` when you need only selected fields.
+Use `PickType()` when only selected properties are needed.
 
 ```ts
 import { PickType } from '@nestjs/mapped-types';
@@ -826,18 +806,21 @@ export class LoginUserDto extends PickType(CreateUserDto, [
 ] as const) {}
 ```
 
-This creates a DTO with only:
+This creates a DTO with only `email` and `password`.
 
-- `email`
-- `password`
+## 5.8 Diagram: `PickType()`
 
-Useful for login requests.
+```mermaid
+flowchart LR
+    A[CreateUserDto<br/>firstName, lastName, email, password] --> B[PickType email + password]
+    B --> C[LoginUserDto<br/>email, password]
+```
 
 ---
 
-## 5.5 OmitType Example
+## 5.9 `OmitType()` Example
 
-Use `OmitType()` when you want to remove fields.
+Use `OmitType()` when you want to remove some fields.
 
 ```ts
 import { OmitType } from '@nestjs/mapped-types';
@@ -850,9 +833,17 @@ export class PublicUserDto extends OmitType(CreateUserDto, [
 
 This creates a DTO without `password`.
 
+## 5.10 Diagram: `OmitType()`
+
+```mermaid
+flowchart LR
+    A[CreateUserDto<br/>firstName, lastName, email, password] --> B[OmitType password]
+    B --> C[PublicUserDto<br/>firstName, lastName, email]
+```
+
 ---
 
-# Quick Practical Examples
+# Practical Request Examples
 
 ## GET with Params and Query
 
@@ -895,23 +886,13 @@ createUser(@Body() createUserDto: CreateUserDto) {
 
 ---
 
-# Common Beginner Errors and Meanings
+# Common Beginner Errors
 
-## Error: numeric string is expected
+## 1. `Validation failed numeric string is expected`
+
+This usually happens when `ParseIntPipe` expects a numeric value but receives a wrong or missing value.
 
 Example:
-
-```json
-{
-  "message": "Validation failed (numeric string is expected)",
-  "error": "Bad Request",
-  "statusCode": 400
-}
-```
-
-Meaning: `ParseIntPipe` expected a number-like string but received an invalid value or missing value.
-
-Example cause:
 
 ```ts
 @Query('page', ParseIntPipe) page: number
@@ -920,75 +901,147 @@ Example cause:
 But request sends:
 
 ```http
-?limit=10&offset=20
+GET /users?limit=10&offset=20
 ```
 
 There is no `page`, so validation fails.
 
-## Error: property has no initializer
+## 2. Property has no initializer
 
-Example:
+Error:
 
 ```text
 Property 'firstName' has no initializer and is not definitely assigned in the constructor.
 ```
 
-Fix in DTO:
+Fix:
 
 ```ts
 firstName!: string;
 ```
 
-This tells TypeScript the property will be assigned later by NestJS from the request body.
+This is common in DTO classes.
+
+## 3. Response opens on right side in VS Code
+
+This is controlled by the extension, not by NestJS. Thunder Client and Yak show responses differently.
 
 ---
 
 # Chapters To Be Added Later
 
-The following sections are reserved for future learning.
+The following chapters are intentionally reserved for future updates.
 
 ## 6. Services and Dependency Injection in Depth
 
 _To be added later._
 
+```mermaid
+flowchart LR
+    A[Controller] --> B[Service]
+    B --> C[Repository / Database]
+```
+
 ## 7. Exception Filters
 
 _To be added later._
+
+```mermaid
+flowchart LR
+    A[Error thrown] --> B[Exception Filter]
+    B --> C[Formatted Error Response]
+```
 
 ## 8. Guards and Authentication
 
 _To be added later._
 
+```mermaid
+flowchart LR
+    A[Request] --> B[Guard]
+    B -->|Allowed| C[Controller]
+    B -->|Denied| D[403 Forbidden]
+```
+
 ## 9. Interceptors
 
 _To be added later._
+
+```mermaid
+flowchart LR
+    A[Request] --> B[Interceptor Before]
+    B --> C[Controller]
+    C --> D[Interceptor After]
+    D --> E[Response]
+```
 
 ## 10. Middleware
 
 _To be added later._
 
+```mermaid
+flowchart LR
+    A[Request] --> B[Middleware]
+    B --> C[Route Handler]
+```
+
 ## 11. Database Integration
 
 _To be added later._
+
+```mermaid
+flowchart LR
+    A[Service] --> B[ORM]
+    B --> C[(Database)]
+```
 
 ## 12. TypeORM / Prisma
 
 _To be added later._
 
+```mermaid
+flowchart LR
+    A[NestJS Service] --> B[Prisma or TypeORM]
+    B --> C[(Database Tables)]
+```
+
 ## 13. Authentication with JWT
 
 _To be added later._
+
+```mermaid
+flowchart LR
+    A[Login] --> B[Validate User]
+    B --> C[Generate JWT]
+    C --> D[Client stores token]
+    D --> E[Send token with requests]
+```
 
 ## 14. File Uploads
 
 _To be added later._
 
+```mermaid
+flowchart LR
+    A[Client uploads file] --> B[File Interceptor]
+    B --> C[Controller]
+    C --> D[Storage]
+```
+
 ## 15. Testing in NestJS
 
 _To be added later._
+
+```mermaid
+flowchart LR
+    A[Unit Test] --> B[Service]
+    C[E2E Test] --> D[HTTP Endpoint]
+```
 
 ---
 
 # Final Summary
 
-NestJS provides a structured way to build backend applications. So far, the most important concepts are modules, controllers, routing decorators, params, query parameters, request bodies, providers, pipes, DTOs, global validation, and mapped types. These features help build REST APIs that are organized, safe, scalable, and easy to maintain.
+NestJS is a structured backend framework for building scalable applications. The chapters covered so far explain how requests enter the application, how controllers handle routes, how modules organize features, how providers contain business logic, how pipes validate and transform values, how DTOs protect request data, and how mapped types reduce duplicate DTO code.
+
+Future chapters can be added to this same file while keeping one academic learning document.
